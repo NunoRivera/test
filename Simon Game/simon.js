@@ -37,15 +37,19 @@ function say(m) {
   speechSynthesis.speak(msg);
 }
 
+
 function show(color) {
-
   document.getElementById(color).style.filter = "brightness(200%)";
-
-  //document.getElementById(color).style.animation = "a" + color + " 700ms";
-  eval(color + "Sound").play();
+  eval(`${color}Sound`).play();
+  setTimeout(() => clear(color), 1500);
 }
 
-
+function clear(color) {
+  document.getElementById("color").style.filter = "brightness(100%)";
+  /*   document.getElementById("green").style.filter = "brightness(100%)";
+    document.getElementById("blue").style.filter = "brightness(100%)";
+    document.getElementById("yellow").style.filter = "brightness(100%)"; */
+}
 
 // Generate play
 function generate() {
@@ -73,12 +77,10 @@ function handleControls(element) {
     if (deviceOn === false) {
       deviceOn = true;
       say("Device is on");
-
       document.getElementById("title").style.animation = "none";
       document.getElementById("round").innerHTML = round;
       document.getElementById("main").style.filter = "brightness(100%)";
       document.getElementById("strict").style.filter = "brightness(100%)";
-
       setTimeout(function () {
         show("red");
       }, 500);
@@ -91,7 +93,9 @@ function handleControls(element) {
       setTimeout(function () {
         show("yellow");
       }, 3500);
-      document.getElementById("red").style.filter = "brightness(90%)";
+      setTimeout(function () {
+        clear();
+      }, 4500);
 
     } else {
       deviceOn = false;
@@ -116,6 +120,7 @@ function handleControls(element) {
       gameOn = false;
       gameOver = true;
       say("Stopping game");
+      clear();
       document.getElementById("strict").style.filter = "brightness(100%)";
       sequence = [];
       round = 0;
