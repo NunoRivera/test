@@ -1,0 +1,218 @@
+:root {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  font-family: "Oswald";
+  font-size: 28px;
+  text-align: center;
+  background: rgb(20, 20, 20);
+  color: antiquewhite;
+  cursor: pointer;
+}
+
+main {
+  transition-duration: 1s;
+  filter: brightness(30%);
+}
+
+#title {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  -webkit-filter: brightness(100%) !important;
+  animation: pulse 3s infinite;
+}
+
+#counter {
+  position: relative;
+  border-radius: 50%;
+  font-family: "ORBITRON";
+  top: -205px;
+  background: rgb(29, 0, 0);
+  width: 150px;
+  margin: auto;
+  border-color: silver;
+  border-style: inset;
+  color: red;
+  font-size: 18px;
+
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  margin: auto;
+}
+
+.grid-items {
+  padding: 5px;
+  margin: 0px;
+  border-width: 5px;
+  border-color: rgb(129, 124, 124);
+  border-style: solid;
+  height: 150px;
+  width: 150px;
+}
+
+#controls {
+  margin-top: -50px;
+}
+
+button {
+  padding: 15px;
+  border-radius: 50%;
+  background-color: silver;
+  color: red;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+#start {
+  margin-right: 30px;
+}
+
+#strict {
+  margin-left: 35px;
+}
+
+#red {
+  background: darkred;
+  justify-self: end;
+  animation: none;
+  border-top-width: 10px;
+  border-left-width: 10px;
+  border-top-left-radius: 100%;
+}
+
+#red:active {
+  background: red;
+}
+
+#green {
+  background: darkgreen;
+  animation: none;
+  border-top-width: 10px;
+  border-right-width: 10px;
+  border-top-right-radius: 100%;
+}
+
+#green:active {
+  background: lime;
+}
+
+#yellow {
+  background: rgb(255, 200, 0);
+  justify-self: end;
+  animation: none;
+  border-bottom-width: 10px;
+  border-left-width: 10px;
+  border-bottom-left-radius: 100%;
+}
+
+#yellow:active {
+  background: rgb(255, 255, 0);
+}
+
+#blue {
+  background: darkblue;
+  animation: none;
+  border-bottom-width: 10px;
+  border-right-width: 10px;
+  border-bottom-right-radius: 100%;
+}
+
+#blue:active {
+  background: rgb(0, 130, 255);
+}
+
+.controls {
+  margin: 10px;
+  color: black;
+}
+
+@keyframes pulse {
+  0% {
+    color: white;
+  }
+
+  20% {
+    color: red;
+  }
+
+  40% {
+    color: green;
+  }
+
+  60% {
+    color: yellow;
+  }
+
+  80% {
+    color: blue;
+  }
+
+  100% {
+    color: white;
+  }
+}
+
+@keyframes ared {
+
+  0% {
+    background-color: darkred;
+  }
+
+  50% {
+    background-color: rgb(155, 0, 0);
+  }
+
+  100% {
+    background-color: red;
+  }
+}
+
+@keyframes ayellow {
+  0% {
+    background-color: rgb(255, 200, 0);
+  }
+
+  50% {
+    background-color: rgb(255, 190, 10);
+  }
+
+  100% {
+    background-color: rgb(255, 255, 0);
+  }
+}
+
+@keyframes agreen {
+  0% {
+    background-color: darkgreen;
+  }
+
+  50% {
+    background-color: green;
+  }
+
+  100% {
+    background-color: lime;
+  }
+}
+
+@keyframes ablue {
+  0% {
+    background-color: darkblue;
+  }
+
+  50% {
+    background-color: blue;
+  }
+
+  100% {
+    background-color: rgb(0, 130, 255);
+  }
+}
