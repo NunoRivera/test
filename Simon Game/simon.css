@@ -17,7 +17,7 @@
 
 main {
   transition-duration: 1s;
-  filter: brightness(30%);
+  filter: brightness(25%);
 }
 
 #title {
