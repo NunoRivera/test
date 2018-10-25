@@ -70,6 +70,7 @@ function generate() {
 
 // read user menu input
 function handleControls(element) {
+  //Turning device ON/OFF
   if (element.target.id == "title") {
     if (deviceOn === false) {
       deviceOn = true;
@@ -102,6 +103,7 @@ function handleControls(element) {
       gameOver = true;
     }
   }
+  // Starting/Stoping Game
   if (element.target.id === "start" && deviceOn === true) {
     if (gameOn === false) {
       gameOn = true;
@@ -119,6 +121,7 @@ function handleControls(element) {
       document.getElementById("round").innerHTML = round;
     }
   }
+  // Mode Selection STRICT/NORMAL
   if (element.target.id === "strict" && deviceOn === true && gameOn === false) {
     if (strict === false) {
       strict = true;
@@ -178,15 +181,19 @@ function human() {
 
 function humanPlay(element) {
   let selected = element.target.id;
-  console.log(selected, sequence[j]);
   let j = 0;
+  console.log(selected, sequence[j]);
   if (j < round && selected == sequence[j]) {
     j++;
     human();
-  } else if (selected == sequence[j]) {
+  } else if (selected != sequence[j]) {
     gameOver = true;
+    document.querySelector("#lamps").removeEventListener("click", humanPlay);
     game();
-  } else if (j == round) simon();
+  } else if (j == round) {
+    document.querySelector("#lamps").removeEventListener("click", humanPlay);
+    simon();
+  }
 
 
   /*   while (i < round) {
