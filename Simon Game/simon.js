@@ -1,9 +1,11 @@
-let sequence = [];
 let deviceOn = false;
 let gameOn = false;
-let strict = false;
-let round = 0;
 let gameOver = true;
+let sequence = [];
+let strict = true;
+let round = 0;
+let simonTurn = true;
+let pleaseRepeat = false;
 
 let redSound = new Audio(
   "https://s3.amazonaws.com/freecodecamp/simonSound1.mp3"
@@ -23,8 +25,17 @@ greenSound.load();
 yellowSound.load();
 blueSound.load();
 
+function initialize() {
+  gameOn = false;
+  gameOver = true;
+  sequence = [];
+  simonTurn = true;
+  round = 0;
+}
+
 // say
-function say(m) {
+function say(message) {
+  if (message == "Game Over!") document.querySelector("#lamps").removeEventListener("click", humanPlay);
   let msg = new SpeechSynthesisUtterance();
   let voices = window.speechSynthesis.getVoices();
   msg.voice = voices[10];
@@ -32,23 +43,19 @@ function say(m) {
   msg.volume = 1;
   msg.rate = 1;
   msg.pitch = 0.8;
-  msg.text = m;
+  msg.text = message;
   msg.lang = "en-UK";
   speechSynthesis.speak(msg);
 }
 
-// show and play
+// show -> play sound, light up and clear
 function show(color) {
   document.getElementById(color).style.filter = "brightness(200%)";
   eval(`${color}Sound`).play();
-  setTimeout(() => clear(color), 1000);
+  setTimeout(() => document.getElementById(color).style.filter = "brightness(100%)", 500);
 }
 
-function clear(color) {
-  document.getElementById(color).style.filter = "brightness(100%)";
-}
-
-// Generate play
+// Generate play sequence
 function generate() {
   let x = Math.floor(Math.random() * 4);
   switch (x) {
@@ -68,11 +75,11 @@ function generate() {
   console.log(sequence);
 }
 
-// read user menu input
+// "User menu" input
 function handleControls(element) {
   //Turning device ON/OFF
   if (element.target.id == "title") {
-    if (deviceOn === false) {
+    if (!deviceOn) {
       deviceOn = true;
       say("Device is on");
       document.getElementById("title").style.animation = "none";
@@ -84,46 +91,41 @@ function handleControls(element) {
       }, 500);
       setTimeout(function () {
         show("green");
-      }, 1500);
+      }, 1000);
       setTimeout(function () {
         show("blue");
-      }, 2500);
+      }, 1500);
       setTimeout(function () {
         show("yellow");
-      }, 3500);
+      }, 2000);
     } else {
-      deviceOn = false;
       say("Device is off");
+      deviceOn = false;
+      initialize();
+      document.querySelector("#lamps").removeEventListener("click", humanPlay);
       document.getElementById("title").style.animation = "pulse 2s infinite";
       document.getElementById("main").style.filter = "brightness(25%)";
-      sequence = [];
-      deviceOn = false;
-      gameOn = false;
-      round = 0;
-      gameOver = true;
     }
   }
   // Starting/Stoping Game
-  if (element.target.id === "start" && deviceOn === true) {
-    if (gameOn === false) {
+  if (element.target.id === "start" && deviceOn) {
+    if (!gameOn) {
       gameOn = true;
       gameOver = false;
+      simonTurn = true;
       say("Starting game");
       document.getElementById("strict").style.filter = "brightness(25%)";
       game();
     } else {
-      gameOn = false;
-      gameOver = true;
+      initialize();
       say("Stopping game");
       document.getElementById("strict").style.filter = "brightness(100%)";
-      sequence = [];
-      round = 0;
       document.getElementById("round").innerHTML = round;
     }
   }
   // Mode Selection STRICT/NORMAL
-  if (element.target.id === "strict" && deviceOn === true && gameOn === false) {
-    if (strict === false) {
+  if (element.target.id === "strict" && deviceOn && !gameOn) {
+    if (!strict) {
       strict = true;
       document.getElementById("strict").innerHTML = "Strict Mode";
       say("Strict mode activated");
@@ -136,74 +138,65 @@ function handleControls(element) {
 }
 
 // Game engine
-let simonTurn = true;
-
 function game() {
-  if (!gameOver && round < 5) {
+  if (!gameOver && simonTurn) {
+    pleaseRepeat = false;
     simon();
-    /*     document.addEventListener("click", humanPlay, false);
-     */
-    human();
-  } else {
+  } else if (!gameOver && !simonTurn) human();
+  if (gameOver) {
     say("Game Over!");
-    gameOn = false;
-    gameOver = true;
+    console.log("game over");
+    initialize();
     document.getElementById("strict").style.filter = "brightness(100%)";
-    sequence = [];
-    round = 0;
     document.getElementById("round").innerHTML = round;
   }
-
 }
 
 function simon() {
   console.log("Simon");
-  document.removeEventListener("click", handleControls);
-  generate();
-  round++;
-  document.getElementById("round").innerHTML = round;
+  document.querySelector("#lamps").removeEventListener("click", humanPlay);
+  if (!pleaseRepeat) {
+    generate();
+    round++;
+    document.getElementById("round").innerHTML = round;
+  }
   let i = 0;
   while (i < round) {
-    let e = sequence[i];
-    setTimeout(function () {
-      show(e);
-    }, i * 1500);
+    let el = sequence[i];
+    setTimeout(show, i * 750, el);
     i++;
   }
   simonTurn = false;
-  human();
+  game();
 }
+
+let j
 
 function human() {
   console.log("HUMAN");
-  document.querySelector("#lamps").addEventListener("click", humanPlay, false);
+  j = 0;
+  document.querySelector("#lamps").addEventListener("click", humanPlay);
 }
 
 function humanPlay(element) {
   let selected = element.target.id;
-  let j = 0;
-  console.log(selected, sequence[j]);
-  if (j < round && selected == sequence[j]) {
+  eval(`${selected}Sound`).play();
+  if (j < round && selected == sequence[j]) { // Player guesses
     j++;
-    human();
-  } else if (selected != sequence[j]) {
+  } else if (j < round && selected != sequence[j] && strict) { // Player misses on STRICT Mode
     gameOver = true;
     document.querySelector("#lamps").removeEventListener("click", humanPlay);
+    j = null;
     game();
-  } else if (j == round) {
-    document.querySelector("#lamps").removeEventListener("click", humanPlay);
-    simon();
+  } else { // Player misses on NORMAL Mode
+    document.getElementById("strict").style.filter = "brightness(200%)";
+    pleaseRepeat = true;
+    setTimeout(simon, 1000);
+    setTimeout(() => document.getElementById("strict").style.filter = "brightness(25%)", 1000);
   }
-
-
-  /*   while (i < round) {
-      if (selected == sequence[i]) {
-        i++;
-      } else {
-        gameOver = true;
-        game();
-      }
-    } */
-
+  if (j == round) {
+    simonTurn = true;
+    setTimeout(game, 1000);
+  }
 }
-document.addEventListener("click", handleControls, false);
+document.addEventListener("click", handleControls);

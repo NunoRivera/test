@@ -24,6 +24,7 @@ main {
   margin-top: 0px;
   margin-bottom: 10px;
   -webkit-filter: brightness(100%) !important;
+  filter: brightness(100%);
   animation: pulse 3s infinite;
 }
 
@@ -90,6 +91,7 @@ button {
 
 #red:active {
   background: red;
+  border-color: white;
 }
 
 #green {
@@ -102,6 +104,7 @@ button {
 
 #green:active {
   background: lime;
+  border-color: white;
 }
 
 #yellow {
@@ -115,6 +118,7 @@ button {
 
 #yellow:active {
   background: rgb(255, 255, 0);
+  border-color: white;
 }
 
 #blue {
@@ -127,6 +131,7 @@ button {
 
 #blue:active {
   background: rgb(0, 130, 255);
+  border-color: white;
 }
 
 .controls {
@@ -159,61 +164,3 @@ button {
     color: white;
   }
 }
-
-/* 
-@keyframes ared {
-
-  0% {
-    background-color: darkred;
-  }
-
-  50% {
-    background-color: rgb(155, 0, 0);
-  }
-
-  100% {
-    background-color: red;
-  }
-}
-
-@keyframes ayellow {
-  0% {
-    background-color: rgb(255, 200, 0);
-  }
-
-  50% {
-    background-color: rgb(255, 190, 10);
-  }
-
-  100% {
-    background-color: rgb(255, 255, 0);
-  }
-}
-
-@keyframes agreen {
-  0% {
-    background-color: darkgreen;
-  }
-
-  50% {
-    background-color: green;
-  }
-
-  100% {
-    background-color: lime;
-  }
-}
-
-@keyframes ablue {
-  0% {
-    background-color: darkblue;
-  }
-
-  50% {
-    background-color: blue;
-  }
-
-  100% {
-    background-color: rgb(0, 130, 255);
-  }
-} */
