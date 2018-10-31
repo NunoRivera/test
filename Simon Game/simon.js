@@ -209,7 +209,6 @@ function humanPlay(element) {
     setTimeout(game, 1000);
   }
 }
-//window.addEventListener("click", handleControls);
 
 // First we check if you support touch, otherwise it's click:
 let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
