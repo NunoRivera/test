@@ -2,10 +2,11 @@ let deviceOn = false;
 let gameOn = false;
 let gameOver = true;
 let sequence = [];
-let strict = true;
-let round = 0;
+let strictMode = true;
+let turn = 0;
 let simonTurn = true;
 let pleaseRepeat = false;
+let j;
 
 let redSound = new Audio(
   "https://s3.amazonaws.com/freecodecamp/simonSound1.mp3"
@@ -30,19 +31,19 @@ function initialize() {
   gameOver = true;
   sequence = [];
   simonTurn = true;
-  round = 0;
+  turn = 0;
 }
 
 // say
 function say(message) {
-  if (message == "Game Over!") document.querySelector("#lamps").removeEventListener("click", humanPlay);
+  //  if (message == "Game Over!") {document.querySelector("#lamps").removeEventListener("click", humanPlay);};
   let msg = new SpeechSynthesisUtterance();
   let voices = window.speechSynthesis.getVoices();
-  msg.voice = voices[10];
-  msg.voiceUri = "native";
+  msg.voice = voices[1];
+  msg.voiceUri = "Google UK English Male";
   msg.volume = 1;
   msg.rate = 1;
-  msg.pitch = 0.8;
+  msg.pitch = 1;
   msg.text = message;
   msg.lang = "en-UK";
   speechSynthesis.speak(msg);
@@ -72,7 +73,6 @@ function generate() {
       sequence.push("yellow");
       break;
   }
-  console.log(sequence);
 }
 
 // "User menu" input
@@ -81,9 +81,11 @@ function handleControls(element) {
   if (element.target.id == "title") {
     if (!deviceOn) {
       deviceOn = true;
-      say("Device is on");
+      if ('speechSynthesis' in window) {
+        say("Device is on");
+      }
       document.getElementById("title").style.animation = "none";
-      document.getElementById("round").innerHTML = round;
+      document.getElementById("round").innerHTML = turn;
       document.getElementById("main").style.filter = "brightness(100%)";
       document.getElementById("strict").style.filter = "brightness(100%)";
       setTimeout(function () {
@@ -99,7 +101,9 @@ function handleControls(element) {
         show("yellow");
       }, 2000);
     } else {
-      say("Device is off");
+      if ('speechSynthesis' in window) {
+        say("Device is off");
+      }
       deviceOn = false;
       initialize();
       document.querySelector("#lamps").removeEventListener("click", humanPlay);
@@ -113,26 +117,35 @@ function handleControls(element) {
       gameOn = true;
       gameOver = false;
       simonTurn = true;
-      say("Starting game");
+      if ('speechSynthesis' in window) {
+        say("Starting game");
+      }
       document.getElementById("strict").style.filter = "brightness(25%)";
       game();
     } else {
       initialize();
-      say("Stopping game");
+      if ('speechSynthesis' in window) {
+        say("Stopping game");
+      }
+
       document.getElementById("strict").style.filter = "brightness(100%)";
-      document.getElementById("round").innerHTML = round;
+      document.getElementById("round").innerHTML = turn;
     }
   }
   // Mode Selection STRICT/NORMAL
   if (element.target.id === "strict" && deviceOn && !gameOn) {
-    if (!strict) {
-      strict = true;
+    if (!strictMode) {
+      strictMode = true;
       document.getElementById("strict").innerHTML = "Strict Mode";
-      say("Strict mode activated");
+      if ('speechSynthesis' in window) {
+        say("Strict mode activated");
+      }
     } else {
-      strict = false;
+      strictMode = false;
       document.getElementById("strict").innerHTML = "Normal mode";
-      say("Normal mode activated");
+      if ('speechSynthesis' in window) {
+        say("Normal mode activated");
+      }
     }
   }
 }
@@ -144,24 +157,24 @@ function game() {
     simon();
   } else if (!gameOver && !simonTurn) human();
   if (gameOver) {
-    say("Game Over!");
-    console.log("game over");
+    if ('speechSynthesis' in window) {
+      say("Game Over!");
+    }
     initialize();
     document.getElementById("strict").style.filter = "brightness(100%)";
-    document.getElementById("round").innerHTML = round;
+    document.getElementById("round").innerHTML = turn;
   }
 }
 
 function simon() {
-  console.log("Simon");
   document.querySelector("#lamps").removeEventListener("click", humanPlay);
   if (!pleaseRepeat) {
     generate();
-    round++;
-    document.getElementById("round").innerHTML = round;
+    turn++;
+    document.getElementById("round").innerHTML = turn;
   }
   let i = 0;
-  while (i < round) {
+  while (i < turn) {
     let el = sequence[i];
     setTimeout(show, i * 750, el);
     i++;
@@ -170,10 +183,7 @@ function simon() {
   game();
 }
 
-let j
-
 function human() {
-  console.log("HUMAN");
   j = 0;
   document.querySelector("#lamps").addEventListener("click", humanPlay);
 }
@@ -181,9 +191,9 @@ function human() {
 function humanPlay(element) {
   let selected = element.target.id;
   eval(`${selected}Sound`).play();
-  if (j < round && selected == sequence[j]) { // Player guesses
+  if (j < turn && selected == sequence[j]) { // Player guesses
     j++;
-  } else if (j < round && selected != sequence[j] && strict) { // Player misses on STRICT Mode
+  } else if (j < turn && selected != sequence[j] && strictMode) { // Player misses on STRICT Mode
     gameOver = true;
     document.querySelector("#lamps").removeEventListener("click", humanPlay);
     j = null;
@@ -194,9 +204,14 @@ function humanPlay(element) {
     setTimeout(simon, 1000);
     setTimeout(() => document.getElementById("strict").style.filter = "brightness(25%)", 1000);
   }
-  if (j == round) {
+  if (j == turn) {
     simonTurn = true;
     setTimeout(game, 1000);
   }
 }
-document.addEventListener("click", handleControls);
+//window.addEventListener("click", handleControls);
+
+// First we check if you support touch, otherwise it's click:
+let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+// Then we bind via that event.
+document.addEventListener(touchEvent, handleControls);
